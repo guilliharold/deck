@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Deck — audio format converter</title>
+
+<!-- coi-serviceworker: injects the cross-origin isolation headers GitHub Pages
+     can't set itself, so ffmpeg.wasm's multi-threaded core can use SharedArrayBuffer.
+     This MUST be a local file, same-origin — it cannot be loaded from a CDN,
+     because a page can only register a service worker script from its own origin. -->
+<script src="coi-serviceworker.js"></script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="deck">
+  <header>
+    <h1 class="wordmark">deck<span>.</span></h1>
+    <p class="tagline">Drop in an audio file, pick an output format, convert. Runs entirely in your browser — nothing you load here ever leaves your machine.</p>
+  </header>
+
+  <div class="panel">
+    <p class="row-label">01 — SOURCE</p>
+    <div id="slot">
+      <div id="slotPrompt">
+        <div class="prompt">drop a file, or click to browse</div>
+        <div class="sub">opus · mp3 · wav · m4a · flac · ogg · aac · wma</div>
+      </div>
+      <div class="loaded-file" id="loadedFile">
+        <span class="name" id="fileName"></span>
+        <span class="meta" id="fileMeta"></span>
+      </div>
+      <input type="file" id="fileInput" accept="audio/*" />
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="row-label">02 — TARGET FORMAT</p>
+    <div class="switch" id="formatSwitch">
+      <button data-fmt="mp3" class="active">MP3</button>
+      <button data-fmt="wav">WAV</button>
+      <button data-fmt="opus">OPUS</button>
+      <button data-fmt="ogg">OGG</button>
+      <button data-fmt="flac">FLAC</button>
+      <button data-fmt="m4a">M4A</button>
+      <button data-fmt="aac">AAC</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <p class="row-label">03 — RUN</p>
+    <div class="transport">
+      <button id="convertBtn" disabled>Convert</button>
+      <div class="meter-wrap"><div class="meter-fill" id="meterFill"></div></div>
+    </div>
+    <div id="log"></div>
+    <div id="outputWrap" style="margin-top: 20px;">
+      <div>
+        <div class="name" id="outName"></div>
+        <div class="size" id="outSize"></div>
+      </div>
+      <a id="downloadLink" download>Download</a>
+    </div>
+  </div>
+
+  <footer>
+    Powered by <a href="https://ffmpegwasm.netlify.app/" target="_blank" rel="noopener">ffmpeg.wasm</a>. First conversion loads a ~30MB engine, so it takes a few seconds to warm up — later conversions are quick.
+  </footer>
+</div>
+
+<script type="module" src="script/converter.js"></script>
+
+</body>
+</html>
