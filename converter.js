@@ -1,5 +1,9 @@
-import { FFmpeg } from 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js';
-import { toBlobURL, fetchFile } from 'https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js';
+// NOTE: @ffmpeg/ffmpeg and @ffmpeg/util are loaded with a dynamic import()
+// inside loadFFmpeg() below, not a static top-of-file import. A static import
+// of an external URL fails the whole module (silently, with zero errors shown
+// to the user) if that one request has any hiccup — which would also kill the
+// file-picker and drag-and-drop code further down, since none of this file
+// would run at all. Dynamic import keeps the UI wiring independent of it.
 
 const slot = document.getElementById('slot');
 const fileInput = document.getElementById('fileInput');
@@ -20,6 +24,7 @@ let currentFile = null;
 let targetFormat = 'mp3';
 let ffmpeg = null;
 let ffmpegLoading = null;
+let fetchFileRef = null;
 
 function bytesToSize(bytes) {
   const units = ['B', 'KB', 'MB', 'GB'];
@@ -85,6 +90,20 @@ async function loadFFmpeg() {
 
   ffmpegLoading = (async () => {
     log('loading engine…');
+
+    let FFmpeg, toBlobURL, fetchFile;
+    try {
+      [{ FFmpeg }, { toBlobURL, fetchFile }] = await Promise.all([
+        import('https://unpkg.com/@ffmpeg/ffmpeg@0.12.10/dist/esm/index.js'),
+        import('https://unpkg.com/@ffmpeg/util@0.12.1/dist/esm/index.js'),
+      ]);
+    } catch (err) {
+      log('could not load the conversion library from unpkg.com', 'err');
+      log('check your connection, or that unpkg.com is not blocked (ad blockers/extensions sometimes do this)', 'err');
+      throw err;
+    }
+    fetchFileRef = fetchFile;
+
     const instance = new FFmpeg();
     instance.on('log', ({ message }) => log(message));
     instance.on('progress', ({ progress }) => {
@@ -137,7 +156,7 @@ convertBtn.addEventListener('click', async () => {
     const outFileName = `${baseName}.${targetFormat}`;
 
     log(`writing ${inName} into engine…`);
-    await engine.writeFile(inName, await fetchFile(currentFile));
+    await engine.writeFile(inName, await fetchFileRef(currentFile));
 
     log(`converting to ${targetFormat.toUpperCase()}…`);
     await engine.exec(['-i', inName, outFileName]);
