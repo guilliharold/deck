@@ -1,0 +1,271 @@
+:root {
+  --ink: #1B1F1C;
+  --ink-soft: #262B27;
+  --bone: #F1ECDF;
+  --bone-dim: #C9C2AE;
+  --amber: #E2A33B;
+  --teal: #2F5C55;
+  --rust: #8C4A3A;
+  --line: #3A413C;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--ink);
+  color: var(--bone);
+  font-family: 'IBM Plex Mono', monospace;
+  min-height: 100vh;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  padding: 48px 20px 80px;
+}
+
+.deck {
+  width: 100%;
+  max-width: 640px;
+}
+
+header {
+  margin-bottom: 40px;
+}
+
+.wordmark {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-optical-sizing: auto;
+  font-size: clamp(40px, 8vw, 58px);
+  letter-spacing: -0.01em;
+  color: var(--bone);
+  margin: 0;
+  line-height: 1;
+}
+
+.wordmark span {
+  color: var(--amber);
+}
+
+.tagline {
+  margin: 14px 0 0;
+  max-width: 46ch;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--bone-dim);
+}
+
+.panel {
+  border: 1px solid var(--line);
+  background: var(--ink-soft);
+  padding: 28px;
+}
+
+.panel + .panel {
+  margin-top: 2px;
+  border-top: none;
+}
+
+.row-label {
+  font-size: 11px;
+  color: var(--bone-dim);
+  margin: 0 0 14px;
+  letter-spacing: 0.02em;
+}
+
+/* --- drop slot --- */
+
+#slot {
+  border: 1px dashed var(--line);
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+  position: relative;
+}
+
+#slot:hover, #slot.drag {
+  border-color: var(--amber);
+  background: rgba(226, 163, 59, 0.06);
+}
+
+#slot .prompt {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  color: var(--bone);
+}
+
+#slot .sub {
+  font-size: 12px;
+  color: var(--bone-dim);
+  margin-top: 8px;
+}
+
+#fileInput { display: none; }
+
+.loaded-file {
+  display: none;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.loaded-file.show { display: flex; }
+
+.loaded-file .name {
+  color: var(--amber);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.loaded-file .meta {
+  color: var(--bone-dim);
+  flex-shrink: 0;
+}
+
+/* --- rotary format switch --- */
+
+.switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.switch button {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--bone-dim);
+  padding: 9px 16px;
+  cursor: pointer;
+  transition: all 0.12s ease;
+}
+
+.switch button:hover {
+  border-color: var(--bone-dim);
+  color: var(--bone);
+}
+
+.switch button.active {
+  border-color: var(--amber);
+  color: var(--ink);
+  background: var(--amber);
+}
+
+/* --- transport / action row --- */
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+#convertBtn {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 17px;
+  background: var(--teal);
+  color: var(--bone);
+  border: none;
+  padding: 14px 30px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+#convertBtn:hover:not(:disabled) { background: #386f66; }
+#convertBtn:active:not(:disabled) { transform: translateY(1px); }
+
+#convertBtn:disabled {
+  background: var(--line);
+  color: var(--bone-dim);
+  cursor: not-allowed;
+}
+
+.meter-wrap {
+  flex: 1;
+  height: 8px;
+  background: var(--ink);
+  border: 1px solid var(--line);
+  position: relative;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--teal), var(--amber));
+  transition: width 0.2s ease;
+}
+
+/* --- console log --- */
+
+#log {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--bone-dim);
+  white-space: pre-wrap;
+  max-height: 140px;
+  overflow-y: auto;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: none;
+}
+
+#log.show { display: block; }
+#log .ok { color: var(--amber); }
+#log .err { color: var(--rust); }
+
+/* --- output --- */
+
+#outputWrap {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+#outputWrap.show { display: flex; }
+
+#outputWrap .name {
+  font-size: 13px;
+  color: var(--bone);
+}
+
+#outputWrap .size {
+  font-size: 12px;
+  color: var(--bone-dim);
+}
+
+#downloadLink {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink);
+  background: var(--amber);
+  text-decoration: none;
+  padding: 12px 24px;
+  flex-shrink: 0;
+}
+
+#downloadLink:hover { background: #eeb457; }
+
+footer {
+  margin-top: 28px;
+  font-size: 11px;
+  color: var(--bone-dim);
+  line-height: 1.7;
+}
+
+footer a { color: var(--bone-dim); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
