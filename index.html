@@ -6,8 +6,10 @@
 <title>Deck — audio format converter</title>
 
 <!-- coi-serviceworker: injects the cross-origin isolation headers GitHub Pages
-     can't set itself, so ffmpeg.wasm's multi-threaded core can use SharedArrayBuffer -->
-<script src="https://cdn.jsdelivr.net/gh/gzuidhof/coi-serviceworker@2.2.1/coi-serviceworker.min.js"></script>
+     can't set itself, so ffmpeg.wasm's multi-threaded core can use SharedArrayBuffer.
+     This MUST be a local file, same-origin — it cannot be loaded from a CDN,
+     because a page can only register a service worker script from its own origin. -->
+<script src="coi-serviceworker.js"></script>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
